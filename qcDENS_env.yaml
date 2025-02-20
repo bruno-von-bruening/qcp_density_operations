@@ -1,0 +1,20 @@
+name: qcDENS
+channels:
+  - conda-forge
+#  - conda-forge/label/libint_dev
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pydantic
+  #- git
+  - numpy
+  - pyyaml
+  - scikit-image
+  #- psi4
+  #- dftd3-python
+  - pip:
+    #- fastapi[standard]
+    #- sqlmodel
+    #- requests
+    - rdkit
