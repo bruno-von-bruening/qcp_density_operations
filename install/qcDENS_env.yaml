@@ -1,0 +1,15 @@
+name: qcDENS
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pydantic
+  - numpy
+  - pyyaml
+  - scikit-image
+  - pip
+  - pip:
+    - rdkit
+    - qc-iodata
+    - qc-gbasis
+    - qc-grid

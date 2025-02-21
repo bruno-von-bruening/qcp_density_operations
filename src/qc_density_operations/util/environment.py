@@ -27,7 +27,7 @@ file=Annotated[str, BeforeValidator(check_file)]
 my_list_float=Annotated[ List[float], BeforeValidator(check_float_list)]
 
 def run_shell_command(cmd):
-    p=sp.Popen(cmd, shell=True)
+    p=sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
     stdout, stderr= [x.decode('utf-8') for x in p.communicate()  ]
     if p.returncode!=0:
         raise Exception(f"Finished with error ({cmd}): stderr={stderr}")
