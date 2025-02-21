@@ -1,10 +1,33 @@
 conda_env='qcDENS'
 conda_file='install/qcDENS_env.yaml'
+dependencies=("PROPERTY_OBJECTS_HOME")
 
 if [ ! -f ${conda_file} ]; then
    echo "The file \'${conda_file}\' does not exist"
    exit
 fi
+
+get_dependencies() {
+   dependencies=("$@")
+   for var in "${dependencies[@]}"; do
+      if [ -z ${var} ]; then
+         echo required environment variable ${var} is not defined
+         exit
+      fi
+      path=$(printf "%s"  "${!var}" )
+      if [ -z ${path} ]; then
+         echo the variable \'${var}\' appears to be empty and should be set
+         exit
+      fi
+      if [ ! -d "${path}" ]; then
+         echo the path ${path} associated with variable \'${var}\' is not a directory: \'${path}\'
+         exit
+      fi
+      paths+=("${path}")
+   done
+   echo ${paths[@]}
+}
+paths=( "$(get_dependencies ${dependencies[@]})")
 
 source activate base
 conda init bash 
@@ -35,5 +58,7 @@ install_pip_project() {
 }
 
 install_pip_project '.'
-install_pip_project "$PROPERTY_OBJECTS_HOME"
+for var in "${paths[@]}"; do
+   install_pip_project ${var}
+done
 

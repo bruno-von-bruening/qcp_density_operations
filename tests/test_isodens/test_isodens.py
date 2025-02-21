@@ -2,7 +2,7 @@
 from qc_density_operations.calc_IsoDensSurf.calc_IsoDensSurf import IsoDensSurf
 import subprocess as sp
 
-import os.path
+import os
 
 def load_dummy_file(file):
     dummy_path=os.path.realpath('../test_data')

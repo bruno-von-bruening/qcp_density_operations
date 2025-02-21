@@ -1,5 +1,5 @@
 #!/usr/bin/env
-import os
+import os, yaml
 import subprocess as sp
 
 home=os.path.realpath('..')
@@ -23,10 +23,10 @@ def  env_setup_instructions(env):
     print(instructions)
 
 def compile_f90():
-    lib_path=os.path.join(home, 'lib')
-    
     origin=os.getcwd()
+    lib_path=os.path.join(home, 'lib')
     os.chdir(lib_path)
+
     script='compile.sh'
     cmd=f"bash compile.sh"
     p=sp.Popen( cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
@@ -35,6 +35,8 @@ def compile_f90():
     if p.returncode!=0:
         raise Exception(f"Error in executing {cmd} (pwd={os.getcwd()}):\n {stderr}")
     print(f"Compiled F90 files")
+
+    os.chdir(origin)
     return lib_path
 
 def setup():
