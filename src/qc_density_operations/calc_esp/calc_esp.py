@@ -39,7 +39,7 @@ def make_grid_object(inp, surface_values, energy_units, charge_violation):
 
 @validate_call
 def calc_esp(
-    fchk_file:file,input:file|List[file], 
+    fchk_file:file|List[file],input:file|List[file], 
     charge_thres=1.e-6,
     do_plot=False, drop=True, output_name=None, engine='fortran'
 ):
@@ -156,8 +156,9 @@ def calc_esp(
                     except Exception as ex:
                         print('Key spacing is not in info')
                         spacing=None
-                    results['files']['esp-maps'].update({input[i]:{
+                    results['files']['esp-maps'].update({drop_path:{
                         'isodensity_value':isod,
+                        'surface_file': input[i],
                         'spacing':  spacing,
                         'num_faces': num_faces,
                         'num_vertices': num_vertices,
@@ -168,7 +169,7 @@ def calc_esp(
                 tmp_inp.remove_tmp()
                 print(f"Removed temporary file {tmp_inp.file}")
                 raise Ellipsis(ex)
-        with open('results.json','w') as wr:        
+        with open('results.yaml','w') as wr:        
             results.update({'timings':tracker.timings_dic(),'info':tracker.info_dic()})
             yaml.dump(results, wr)
         tmp_file.remove_tmp(verbose=True)
