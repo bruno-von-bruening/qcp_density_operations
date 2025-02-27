@@ -1,33 +1,22 @@
 conda_env='qcDENS'
 conda_file='install/qcDENS_env.yaml'
-dependencies=("PROPERTY_OBJECTS_HOME")
+dependencies=("PROPERTY_OBJECTS_HOME" "QC_GLOBAL_UTILITIES")
 
 if [ ! -f ${conda_file} ]; then
    echo "The file \'${conda_file}\' does not exist"
    exit
 fi
 
-get_dependencies() {
-   dependencies=("$@")
-   for var in "${dependencies[@]}"; do
-      if [ -z ${var} ]; then
-         echo required environment variable ${var} is not defined
-         exit
-      fi
-      path=$(printf "%s"  "${!var}" )
-      if [ -z ${path} ]; then
-         echo the variable \'${var}\' appears to be empty and should be set
-         exit
-      fi
-      if [ ! -d "${path}" ]; then
-         echo the path ${path} associated with variable \'${var}\' is not a directory: \'${path}\'
-         exit
-      fi
-      paths+=("${path}")
-   done
-   echo ${paths[@]}
-}
-paths=( "$(get_dependencies ${dependencies[@]})")
+source install/setup_ext.sh
+
+paths="$(get_paths_for_dependencies ${dependencies[@]})"
+if [[ $? != 0 ]]; then
+   echo "Error processing dependencies (${dependencies[@]}): ${paths}"
+   exit
+fi
+paths=( ${paths} ) 
+echo You gave the Dependencies: ${dependencies[@]}
+echo Following paths were found for them: ${paths[@]}
 
 source activate base
 conda init bash 
@@ -41,24 +30,10 @@ if [[ $? != 0 ]]; then
    exit
 fi
 
-install_pip_project() {
-   dir=$1
-   if [ ! -d ${dir} ]; then
-      print "Provided argument ${dir} is not a directory"
-      exit
-   fi
-   old_dir=$(pwd)
-   cd ${dir}
 
-   conda run -n ${conda_env} python -m pip install --upgrade build
-   conda run -n ${conda_env} python -m build
-   conda run -n ${conda_env} python -m pip install .
-
-   cd ${old_dir}
-}
-
-install_pip_project '.'
-for var in "${paths[@]}"; do
-   install_pip_project ${var}
-done
+install_pip_projects '.' ${paths[@]}
+if [[ $? != 0 ]]; then
+   echo "Error in installing pip dependencies"
+   exit
+fi
 
