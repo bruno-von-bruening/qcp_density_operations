@@ -1,6 +1,6 @@
 conda_env='qcDENS'
 conda_file='install/qcDENS_env.yaml'
-dependencies=("PROPERTY_OBJECTS_HOME" "QC_GLOBAL_UTILITIES")
+dependencies=("PROPERTY_OBJECTS_HOME" "QC_GLOBAL_UTILITIES_HOME")
 
 if [ ! -f ${conda_file} ]; then
    echo "The file \'${conda_file}\' does not exist"
@@ -18,11 +18,7 @@ paths=( ${paths} )
 echo You gave the Dependencies: ${dependencies[@]}
 echo Following paths were found for them: ${paths[@]}
 
-source activate base
-conda init bash 
-
-conda remove -n ${conda_env} --all
-conda env create -f ${conda_file}
+conda_update_env ${conda_env} ${conda_file}
 
 conda activate ${conda_env}
 if [[ $? != 0 ]]; then

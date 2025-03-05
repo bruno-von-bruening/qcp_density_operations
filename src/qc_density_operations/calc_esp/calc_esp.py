@@ -40,7 +40,7 @@ def make_grid_object(inp, surface_values, energy_units, charge_violation):
 @validate_call
 def calc_esp(
     fchk_file:file|List[file],input:file|List[file], 
-    charge_thres=1.e-6,
+    charge_thres=1.e-4,
     do_plot=False, drop=True, output_name=None, engine='fortran'
 ):
     """ """
