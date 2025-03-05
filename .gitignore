@@ -4,3 +4,7 @@
 **.egg-info/
 **.so
 add_to_shell_init.txt
+**/ln*.*
+**.err
+**.out
+results.yaml
