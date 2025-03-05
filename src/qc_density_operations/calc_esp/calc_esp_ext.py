@@ -29,8 +29,10 @@ def process_input(input):
     
 
     return np.array(vertices), np.array(faces), input_type
+
+
 @validate_call
-def esp_calc(points, integration_points, integration_weights, density, engine='fortran', calc_lib: file|None=None):
+def esp_rho_calc(points, integration_points, integration_weights, density, engine='fortran', calc_lib: file|None=None):
 
     print(f"Number of points {len(points)}, number of density points {len(density)}")
     import numpy as np
@@ -100,4 +102,18 @@ def esp_calc(points, integration_points, integration_weights, density, engine='f
 
 
     ##############
+    return esp
+
+def esp_nuc_calc(points, nuclear_coordinates, nuclear_charges):
+    esp=[]
+    for coord, charge in zip(nuclear_coordinates, nuclear_charges):
+        distances=points-coord
+        distances=np.linalg.norm(distances, axis=1)
+        distances=np.reciprocal(distances)
+        distances[distances > 1000] = 0.
+        
+        elst=distances * charge
+        esp.append(elst)
+    esp=np.array(esp)
+    esp=np.sum(esp,axis=0)
     return esp

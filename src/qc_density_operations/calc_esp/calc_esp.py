@@ -6,7 +6,7 @@ from qc_density_operations.density_eval.density_eval import load_one, make_integ
 from qc_global_utilities.environment.file_handling import temporary_file
 from qc_global_utilities.information.tracker import Tracker
 
-from .calc_esp_ext import process_input, esp_calc
+from .calc_esp_ext import process_input, esp_rho_calc, esp_nuc_calc
 
 avail_modi=['fortran','numpy']
 
@@ -90,12 +90,15 @@ def calc_esp(
 
                 # Calculate ESP
                 tracker.add_time_point(f"Start ESP Evaluation (#{i}) for {inp}")
-                esp=esp_calc(points, integration_points, integration_weights, density, engine=engine, calc_lib=calc_lib)
+                rho_esp=esp_rho_calc(points, integration_points, integration_weights, density, engine=engine, calc_lib=calc_lib)
+                nuc_esp=esp_nuc_calc(points, nuclear_coordinates=mol_data.atcoords, nuclear_charges=mol_data.atnums)
+
                 tracker.add_time_point(f"End ESP Evaluation (#{i}) for {inp}")
                 tracker.add_period(print=True)
 
                 # Convert energy
-                def convert_energy(esp, energy_units='kJ/mol'):
+                @validate_call
+                def convert_energy(esp: pdtc_ndarray, energy_units='kJ/mol'):
                     if energy_units.lower() in ['kj/mol']:
                         au_in_kjmol=2625.5002
                         esp*=au_in_kjmol
@@ -106,7 +109,8 @@ def calc_esp(
                     print(f"ESP in range: {min(esp)} to {max(esp)} [in {energy_units}]")
                     return esp
                 energy_units='kJ/mol'
-                esp=convert_energy(esp, energy_units=energy_units)
+                esp=-1.*rho_esp+nuc_esp
+                nuc_esp=convert_energy(esp, energy_units=energy_units)
 
                 if do_plot:
                     import matplotlib.pyplot as plt
