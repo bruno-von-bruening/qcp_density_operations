@@ -21,7 +21,7 @@ def evaluate_density(mol_data, grid):
 
 def make_integration_grid(mol_data):
     """ """
-    n_rpoints = 200                         # Number of radial points
+    n_rpoints = 400                         # Number of radial points
     oned_grid = GaussLegendre(npoints=n_rpoints)
     radial_grid = BeckeRTransform(0.0, R=1.).transform_1d_grid(oned_grid)
 
@@ -33,5 +33,5 @@ def make_integration_grid(mol_data):
     atcoords = mol_data.atcoords
     atnums = mol_data.atnums
 
-    molgrid = MolGrid.from_preset(atnums, atcoords, rgrid=radial_grid, preset="veryfine", aim_weights=BeckeWeights() )#, store=True)
+    molgrid = MolGrid.from_preset(atnums, atcoords, rgrid=radial_grid, preset="insane", aim_weights=BeckeWeights() )#, store=True)
     return molgrid.points, molgrid.weights

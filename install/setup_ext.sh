@@ -52,11 +52,12 @@ install_pip_project() {
    conda run -n ${conda_env} python -m pip install .
    cd ${old_dir}
 }
+
 install_pip_projects() {
    paths=($@)
    for var  in "${paths[@]}"; do
       install_pip_project "${var}"
-      if [[ $? !=0 ]]; then
+      if [[ $? != 0 ]]; then
          exit 1
       fi
    done
