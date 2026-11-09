@@ -1,0 +1,1 @@
+from pydantic import validate_call; val_call=validate_call(config=dict(arbitrary_types_allowed=True))

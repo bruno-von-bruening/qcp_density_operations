@@ -1,5 +1,5 @@
 
-from iodata import load_one
+from iodata import load_one, IOData
 from gbasis.wrappers import from_iodata
 from gbasis.evals.density import evaluate_density as gbasis_eval_dens
 
@@ -10,8 +10,16 @@ from grid.rtransform import LinearFiniteRTransform
 
 from grid.onedgrid import GaussLegendre
 from grid.rtransform import BeckeRTransform
+from qc_global_utilities.environment.file_handling import file
 
-def evaluate_density(mol_data, grid):
+from . import *
+
+@val_call
+def evaluate_density(mol_data: file|IOData, grid):
+
+    if isinstance(mol_data, str):
+        mol_data = load_one(mol_data)
+    
     ao_basis = from_iodata(mol_data)
     rdm = mol_data.one_rdms["scf"]
     rho = gbasis_eval_dens(rdm, ao_basis, grid)
