@@ -1,5 +1,5 @@
 [project]
-name = "qc_density_operations"
+name = "qcp_density_operations"
 version = "0.1.0"
 description = ''
 readme = "README.md"
@@ -8,3 +8,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
+
+[tool.setuptools]
+script-files = ["bin/calc_IsoDensSurf.py","bin/calc_esp.py",'bin/calc_mul_esp.py' ]
+
+

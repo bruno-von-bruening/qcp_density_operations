@@ -8,3 +8,5 @@ add_to_shell_init.txt
 **.err
 **.out
 results.yaml
+
+sandbox/

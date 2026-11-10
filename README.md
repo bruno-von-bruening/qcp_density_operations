@@ -20,6 +20,6 @@ This should generate an dynamic library (file with '.so' extension).
 Create an environment variable to allow the python installation to access it
 ```
 # 
-export QC_DENSITY_OPERATIONS_LIB=<path-to-lib/>
+export DENSITY_OPERATIONS_LIB=<path-to-lib/>
 ```
 Consider that this environment variable may need to be loaded.

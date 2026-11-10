@@ -1,10 +1,10 @@
 from . import *
 
-from qc_objects.objects.grids import interaction_map
-from qc_density_operations.density_eval.density_eval import load_one, make_integration_grid, evaluate_density
+from qcp_objects.objects.grids import interaction_map
+from qcp_density_operations.density_eval.density_eval import load_one, make_integration_grid, evaluate_density
 
-from qc_global_utilities.environment.file_handling import temporary_file
-from qc_global_utilities.information.tracker import Tracker
+from qcp_global_utils.environment.file_handling import temporary_file
+from qcp_global_utils.information.tracker import Tracker
 
 from .calc_esp_ext import process_input, esp_rho_calc, esp_nuc_calc
 
@@ -31,7 +31,7 @@ def get_fortran_lib():
 
 
 def make_grid_object(inp, surface_values, energy_units, charge_violation):
-    """ Create a grid object from qc_objects library """
+    """ Create a grid object from qcp_objects library """
     obj=interaction_map(inp=inp, scalars=surface_values, energy_units=energy_units, charge_violation=charge_violation)
     # evaluate statitical indicators
     obj.gen_statistical_indicators()
@@ -54,7 +54,7 @@ def calc_esp(
 
     results={'files':{'esp-maps':{}}}
     # Load fchk file
-    tmp_file=temporary_file(fchk_file)
+    tmp_file=temporary_file(fchk_file,copy=True)
     mol_data = load_one(tmp_file.file)
     tracker.add_time_point('Loaded FCHK Data')
     try:
@@ -81,7 +81,7 @@ def calc_esp(
         tracker.add_period(print=True)
         
         for i,inp in enumerate(input):
-            tmp_inp=temporary_file(inp)
+            tmp_inp=temporary_file(inp, copy=True)
             inp=tmp_inp.file
             try:
                 # Load surface
@@ -147,7 +147,7 @@ def calc_esp(
                             raise Exception()
                     # Enrich grid folder by adding 
                     if isinstance(output_name, type(None)):
-                        drop_path=os.path.basename(tmp_inp.source).replace('_surf.json','')+ '_mapsurf.json'
+                        drop_path=os.path.basename(tmp_inp.source).replace('_surf.json','').replace('.json','')+ '_mapsurf.json'
                     else:
                         drop_path=output_name.replace('.json','')+'.json'
                     with open(drop_path,'w') as wr:
@@ -179,6 +179,7 @@ def calc_esp(
         tmp_file.remove_tmp(verbose=True)
         return esp
     except Exception as ex:
-        tmp_file.remove_tmp(verbose=True)
+        if os.path.isfile(tmp_file.temporary):
+            tmp_file.remove_tmp(verbose=True)
         raise Exception(ex)
 

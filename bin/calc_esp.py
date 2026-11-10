@@ -1,11 +1,11 @@
-
 #!/usr/bin/env python
+
 import os
 
-from qc_density_operations.calc_esp.calc_esp import calc_esp 
-from qc_density_operations.calc_esp.calc_esp import avail_modi
+from qcp_density_operations.calc_esp.calc_esp import calc_esp 
+from qcp_density_operations.calc_esp.calc_esp import avail_modi
 
-if __name__=='__main__':
+def main():
     description=f""" Evaluates the ESP on vertices of a given surface
     Currently this surface can only be provided as json object compute by the calc_IsoDensSurf.py script
     Multiple surfaces may be provided
@@ -17,11 +17,13 @@ if __name__=='__main__':
         help=f"Provide Density (as fchk file)")
     par.add_argument('--surf', nargs='+',
         help=f"Surface(s) (as grid file or json file)")
-    par.add_argument('-output_name',
+    par.add_argument('-o','--output_name',
         help=f"File name to drop map to")
     engine_choices=avail_modi
-    par.add_argument('-engine', choices=engine_choices, default='fortran',
+    par.add_argument('--engine', choices=engine_choices, default='fortran',
         help=f"Choice of engine with thich to evaluate esp integrals")
+    
+
     
     args=par.parse_args()
     fchk_file=args.dens
@@ -32,3 +34,6 @@ if __name__=='__main__':
     engine=args.engine
 
     calc_esp(fchk_file, surface_file, do_plot=False, drop=True, output_name=output_name, engine=engine)
+
+if __name__=='__main__':
+    main()

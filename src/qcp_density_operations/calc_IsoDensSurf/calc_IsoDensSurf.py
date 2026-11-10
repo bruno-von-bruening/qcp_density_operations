@@ -36,7 +36,10 @@ def generate_grid(coordinates, grid_space=0.1, margin_size=5):
     dims= np.array([ [(c(x)) for x in [x_vals, y_vals, z_vals] ] for c in [min,max] ])
     return points, points_mesh, dims 
 
-def evaluate_density(mol_data, grid, slice_size=5.e4):
+def evaluate_density(mol_data, grid, 
+                    # slice_size=5.e4
+                    slice_size=1.e5
+):
     ao_basis = from_iodata(mol_data)
     rdm = mol_data.one_rdms["scf"]
     ### Do to memory reason we should evaluate the density slice wise (process dies for too large grids)
@@ -44,8 +47,14 @@ def evaluate_density(mol_data, grid, slice_size=5.e4):
     if len(grid)>slice_size:
         rho=[]
         slices=[ [ int(j*slice_size),  int(min( (j+1)*slice_size,len(grid))) ] for j in range(int(len(grid)/slice_size)+2) if (j)*slice_size<len(grid)]
-        for slice in slices:
-            print(f"Computing slice of density evaluation: {slice}")
+        try:
+            import tqdm
+            func=tqdm.tqdm
+        except Exception as ex:
+            f"Cannot show progress bar since no tqdm: {ex}"
+            func=id
+        for slice in func(slices):
+            # print(f"Computing slice of density evaluation: {slice}")
             rho+=gbasis_eval_dens(rdm, ao_basis, grid[slice[0]:slice[1],:]).tolist()
         rho=np.array(rho)
     else:
@@ -118,13 +127,14 @@ def do_marching_cubes(rho, grid_mesh, dims, isod, grid_dens):
     #raise Exception(dims, verts[0],len(grid_mesh[0]), grid_mesh[0].shape, grid_mesh[1].shape, grid_mesh[2].shape )
     correction_vector=np.array(rho_mesh.shape)-np.ones(3)
     verts_coor=verts/correction_vector #(np.array(grid_mesh[0].shape[:3]-np.ones(3)))
-    print(min(verts_coor[:,0]), max(verts_coor[:,0]), dims)
-    print(min(verts_coor[:,1]), max(verts_coor[:,1]), dims)
-    print(min(verts_coor[:,2]), max(verts_coor[:,2]), dims)
+    # print(min(verts_coor[:,0]), max(verts_coor[:,0]), dims)
+    # print(min(verts_coor[:,1]), max(verts_coor[:,1]), dims)
+    # print(min(verts_coor[:,2]), max(verts_coor[:,2]), dims)
     verts_coor=origin+verts_coor*stretch
-    print('AFTER', min(verts_coor[:,0]), max(verts_coor[:,0]), dims)
-    print('AFTER', min(verts_coor[:,1]), max(verts_coor[:,1]), dims)
-    print('AFTER', min(verts_coor[:,2]), max(verts_coor[:,2]), dims)
+    # verts_coor=verts_coor*stretch
+    # print('AFTER', min(verts_coor[:,0]), max(verts_coor[:,0]), dims)
+    # print('AFTER', min(verts_coor[:,1]), max(verts_coor[:,1]), dims)
+    # print('AFTER', min(verts_coor[:,2]), max(verts_coor[:,2]), dims)
 
     #Check if any vertice is close to a box
     if len(verts_coor)==0:
@@ -149,7 +159,7 @@ def drop_data(results, output_name, mol_data, real_verts_coor, faces, grid_dens,
     convention:str='qcobject'):
     if convention=='qcobject':
         try:
-            from qc_objects.objects.grids import molecular_isodensity_grid
+            from qcp_objects.objects.grids import molecular_isodensity_grid
             grid=molecular_isodensity_grid(input_file=None, output_file=None, vertices=real_verts_coor, faces=faces, length_units='BOHR',
                                     iso_density_value=isod)
         except Exception as ex:
@@ -215,8 +225,8 @@ def IsoDensSurf(
 
     # Molecule data
     #fchk_file=m_util.process_file(fchk_file) # in case symlink etc.
-    from qc_density_operations.util.environment import temporary_file
-    tmp_fchk=temporary_file(fchk_file)
+    from qcp_density_operations.util.environment import temporary_file
+    tmp_fchk=temporary_file(fchk_file, copy=True)
 
     try:
         mol_data = load_one(tmp_fchk.file)
@@ -252,6 +262,8 @@ def IsoDensSurf(
 
                 start=time.time()
                 real_verts_coor, faces=do_marching_cubes(rho,grid_mesh, dims, isod, grid_dens)
+
+                print(f"Origin is {np.array(real_verts_coor).mean(axis=0)}")
 
 
                 print(f"Marching cubes (grid_dens={grid_dens}, iso_dens={isod}): {time.time()-start}")
@@ -291,7 +303,7 @@ def IsoDensSurf(
         return real_verts_coor, faces
     except Exception as ex:
         print(f"Catched extension, deleting temporary_file")
-        tmp_fchk.remove_tmp()
+        # tmp_fchk.remove_tmp()
         raise Exception(f"Error: {ex}")
 
 

@@ -33,6 +33,7 @@ def process_input(input):
 
 @validate_call
 def esp_rho_calc(points, integration_points, integration_weights, density, engine='fortran', calc_lib: file|None=None):
+    """Calculate electrostatic interaction of density with each point for density"""
 
     print(f"Number of points {len(points)}, number of density points {len(density)}")
     import numpy as np
@@ -71,10 +72,17 @@ def esp_rho_calc(points, integration_points, integration_weights, density, engin
     elif engine=='numpy':
         esp=[]
         for position in points:
+            
+            # Evaluate distances (1/|r-r*|) 
             distances=integration_points-position
             distances=np.linalg.norm(distances, axis=1)
             distances=np.reciprocal(distances)
-            distances[distances > 1000] = 0.
+
+            INVERSE_CUTOFF=1000
+            cut_them=distances > INVERSE_CUTOFF
+            distances[cut_them] = 0.
+            if cut_them.sum()>0:
+                print(f"Cutoff {cut_them.sum()} points: {cut_them}")
             
             elst=distances * density
             elst=np.dot(elst, integration_weights)

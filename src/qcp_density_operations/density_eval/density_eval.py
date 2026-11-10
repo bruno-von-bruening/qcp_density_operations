@@ -10,7 +10,7 @@ from grid.rtransform import LinearFiniteRTransform
 
 from grid.onedgrid import GaussLegendre
 from grid.rtransform import BeckeRTransform
-from qc_global_utilities.environment.file_handling import file
+from qcp_global_utils.environment.file_handling import file
 
 from . import *
 

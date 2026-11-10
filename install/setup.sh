@@ -1,6 +1,6 @@
 conda_env='qcDENS'
 conda_file='install/qcDENS_env.yaml'
-dependencies=("PROPERTY_OBJECTS_HOME" "QC_GLOBAL_UTILITIES_HOME")
+dependencies=("PROPERTY_OBJECTS_HOME" "QCP_GLOBAL_UTILS_HOME")
 
 if [ ! -f ${conda_file} ]; then
    echo "The file \'${conda_file}\' does not exist"
