@@ -10,12 +10,12 @@ from grid.rtransform import LinearFiniteRTransform
 
 from grid.onedgrid import GaussLegendre
 from grid.rtransform import BeckeRTransform
-from qcp_global_utils.environment.file_handling import file
+from qcp_global_utils.environment.file_handling import pdtc_file
 
 from . import *
 
 @val_call
-def evaluate_density(mol_data: file|IOData, grid):
+def evaluate_density(mol_data: pdtc_file|IOData, grid):
 
     if isinstance(mol_data, str):
         mol_data = load_one(mol_data)

@@ -12,22 +12,30 @@ avail_modi=['fortran','numpy']
 
 def get_fortran_lib():
     """ If fortran engine was chosen this requires providing the path to a fortran libarary """
-    lib_env_key='DENSITY_OPERATIONS_LIB'
-    if not lib_env_key in os.environ.keys(): 
-        message='\n'.join([
-            f"Cannot find environment variable: '{lib_env_key}\'",
-            f"This variable is neccessary when running fortran code",
-            f"To solve this issue either run this code with the \'numpy\' engine or consider adding the environement variable to your environment during the run (`export {lib_env_key}=<path-to-lib>`)"
-        ])
-        raise Exception(message)
-    else:
-        lib_dir=os.environ[lib_env_key]
-        assert os.path.isdir(lib_dir), f"Provided library path in environment ({lib_env_key}) doe not exist: {lib_dir}"
-        lib_name='libcalcesp.so'
-        lib_path=os.path.join(lib_dir, lib_name)
-        if not os.path.isfile(lib_path): raise Exception(f"Cannot find file {lib_name} in environment varibale path {lib_env_key}=\'{lib_dir}\'"+
-                                                         f"\nConsider that this file should be compiled during installation (check compilation of this library)")
-        return lib_path
+    try: # Get the dynamic library under the pip installation files.
+        from importlib.resources import files
+        lib_path = str(files("qcp_density_operations").joinpath("libcalcesp.so"))
+        assert os.path.isfile(lib_path), f"Not a file: {lib_path}"
+    except Exception as ex:
+        raise Exception(f"Cannot load fortran lib: libcaclesp.so: {ex}")
+    
+        ####### Old code to load environment variable!
+        ### lib_env_key='DENSITY_OPERATIONS_LIB'
+        ### if not lib_env_key in os.environ.keys(): 
+        ###     message='\n'.join([
+        ###         f"Cannot find environment variable: '{lib_env_key}\'",
+        ###         f"This variable is neccessary when running fortran code",
+        ###         f"To solve this issue either run this code with the \'numpy\' engine or consider adding the environement variable to your environment during the run (`export {lib_env_key}=<path-to-lib>`)"
+        ###     ])
+        ###     raise Exception(message)
+        ### else:
+        ###     lib_dir=os.environ[lib_env_key]
+        ###     assert os.path.isdir(lib_dir), f"Provided library path in environment ({lib_env_key}) doe not exist: {lib_dir}"
+        ###     lib_name='libcalcesp.so'
+        ###     lib_path=os.path.join(lib_dir, lib_name)
+        ###     if not os.path.isfile(lib_path): raise Exception(f"Cannot find file {lib_name} in environment varibale path {lib_env_key}=\'{lib_dir}\'"+
+        ###                                                      f"\nConsider that this file should be compiled during installation (check compilation of this library)")
+    return lib_path
 
 
 def make_grid_object(inp, surface_values, energy_units, charge_violation):
@@ -39,7 +47,7 @@ def make_grid_object(inp, surface_values, energy_units, charge_violation):
 
 @validate_call
 def calc_esp(
-    fchk_file:file|List[file],input:file|List[file], 
+    fchk_file: pdtc_file|List[pdtc_file],input:pdtc_file|List[pdtc_file], 
     charge_thres=1.e-4,
     do_plot=False, drop=True, output_name=None, engine='fortran'
 ):
@@ -172,14 +180,14 @@ def calc_esp(
             except Exception as ex:
                 tmp_inp.remove_tmp()
                 print(f"Removed temporary file {tmp_inp.file}")
-                raise Ellipsis(ex)
+                raise Exception(ex) from ex
         with open('results.yaml','w') as wr:        
             results.update({'timings':tracker.timings_dic(),'info':tracker.info_dic()})
             yaml.dump(results, wr)
         tmp_file.remove_tmp(verbose=True)
         return esp
     except Exception as ex:
-        if os.path.isfile(tmp_file.temporary):
-            tmp_file.remove_tmp(verbose=True)
-        raise Exception(ex)
+        #if os.path.isfile(tmp_file.temporary):
+        tmp_file.remove_tmp(verbose=True)
+        raise Exception(ex) from ex
 

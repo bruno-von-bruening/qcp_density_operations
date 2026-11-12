@@ -6,15 +6,16 @@ dependencies:
   - pydantic
   - numpy
   - pyyaml
-  - scikit-image
+  - scikit-image # Nov 11: does not work with python 3.15
   - pip
   - pip:
     - rich # for neat output! (not required at all thought)
+    - build
     - setuptools-scm # For handling of pyproject.toml installation
     - rdkit
     - tqdm # For progress bar
     - qc-iodata
     - qc-gbasis
     - qc-grid==0.0.9
-    - git+ssh://git@github.com/bruno-von-bruening/qcp_global_utils.git@c4c802fa5
-    - git+ssh://git@github.com/bruno-von-bruening/qcp_objects.git@d32cfc3db
+    - git+ssh://git@github.com/bruno-von-bruening/qcp_global_utils.git@a7517d4fe
+    - git+ssh://git@github.com/bruno-von-bruening/qcp_objects.git@b5b1d810a

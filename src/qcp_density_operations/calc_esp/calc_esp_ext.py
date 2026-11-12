@@ -3,7 +3,7 @@ from . import *
 def process_input(input):
     vertices, points, input_type =[None, None, None]
     @validate_call
-    def check_file(input:file):
+    def check_file(input: pdtc_file):
         if input.lower().endswith('.json'):
             input_type='surface.json'
             with open(input, 'r') as rd:
@@ -32,7 +32,7 @@ def process_input(input):
 
 
 @validate_call
-def esp_rho_calc(points, integration_points, integration_weights, density, engine='fortran', calc_lib: file|None=None):
+def esp_rho_calc(points, integration_points, integration_weights, density, engine='fortran', calc_lib: pdtc_file|None=None):
     """Calculate electrostatic interaction of density with each point for density"""
 
     print(f"Number of points {len(points)}, number of density points {len(density)}")

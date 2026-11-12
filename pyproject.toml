@@ -1,6 +1,7 @@
 [project]
 name = "qcp_density_operations"
-version = "0.1.0"
+dynamic=['version']
+# version = "0.1.0"
 description = ''
 readme = "README.md"
 requires-python = ">=3.8"
@@ -10,6 +11,23 @@ classifiers = [
 ]
 
 [tool.setuptools]
-script-files = ["bin/calc_IsoDensSurf.py","bin/calc_esp.py",'bin/calc_mul_esp.py' ]
+script-files = [
+   "bin/calc_IsoDensSurf.py",
+   "bin/calc_esp.py",
+   'bin/calc_mul_esp.py',
+   'bin/qcp_export_envo.py' ,
+]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["qcp_density_operations*"]
 
+[tool.setuptools_scm]
+# version_scheme = "post-release"
+# local_scheme = "dirty-tag"
+# Make a version file (can the be used by this very package)
+version_file = "src/qcp_density_operations/_version.py"
+
+[build-system]
+requires = ["setuptools>=80", "wheel", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"

@@ -23,9 +23,14 @@ def check_float_list(input):
         the_return=input.tolist()
     assert isinstance(the_return, list),f"{check_float_list} is badly coded."
     return the_return
-directory=Annotated[str, BeforeValidator(check_dir)]
-file=Annotated[str, BeforeValidator(check_file)]
+
 my_list_float=Annotated[ List[float], BeforeValidator(check_float_list)]
+if False: # I should get that from qcp_global_utils
+    pass 
+    # directory=Annotated[str, BeforeValidator(check_dir)]
+    # file=Annotated[str, BeforeValidator(check_file)]
+else:
+    from qcp_global_utils.pydantic.pydantic import pdtc_file, pdtc_directory
 
 def run_shell_command(cmd):
     p=sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
@@ -108,10 +113,10 @@ def run_shell_command(cmd):
         
 
 
-@validate_call
-def process_file(fi:file):
-    """ Generate local temporary file, that is:
-        - if symlink: copied to local directory
-        - if gzipped: unzipped
-    """
+# @validate_call
+# def process_file(fi:file):
+#     """ Generate local temporary file, that is:
+#         - if symlink: copied to local directory
+#         - if gzipped: unzipped
+#     """
     

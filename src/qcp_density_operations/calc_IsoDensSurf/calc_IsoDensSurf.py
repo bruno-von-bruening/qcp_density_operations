@@ -174,7 +174,7 @@ def drop_data(results, output_name, mol_data, real_verts_coor, faces, grid_dens,
 
 @validate_call
 def IsoDensSurf(
-    fchk_file:file, grid_spacing:my_list_float|None=None, iso_dens:my_list_float|None=[0.001], do_plot=False, faces=None, drop=True, output_name=None, test=False
+    fchk_file: pdtc_file, grid_spacing:my_list_float|None=None, iso_dens:my_list_float|None=[0.001], do_plot=False, faces=None, drop=True, output_name=None, test=False
 ):
     start=time.time()
     def process_grid_spacings(grid_spacing, iso_dens):

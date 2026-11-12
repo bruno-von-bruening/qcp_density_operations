@@ -9,4 +9,7 @@ add_to_shell_init.txt
 **.out
 results.yaml
 
+
+install/condaenv.* # Think this is not needed since it comes from current conda env install
+
 sandbox/
