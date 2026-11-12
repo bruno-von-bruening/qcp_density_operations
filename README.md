@@ -4,25 +4,18 @@ Operations based on density evaluations
 # Installations
 
 ```bash
-conda enc create -f qcDENS_env.yaml
-python3 -m pip install --upgrade build
-python3 -m build; python3 -m pip install .
-
-python -m pip install qc-gbasis
-python -m pip install qc-iodata
+conda env create -f qcp_dens_env.yml
+pip install . 
 ```
-When running the python code with fortran interfacing:
+
+This should automatically install the fortran library (altough this currently only works on linux).
+For windows and macos users I might have to find a solution ther.
+Manually this would be compiled through:
 ```bash
 cd lib/
 bash compile.sh
 ```
-This should generate an dynamic library (file with '.so' extension).
-Create an environment variable to allow the python installation to access it
-```
-# 
-export DENSITY_OPERATIONS_LIB=<path-to-lib/>
-```
-Consider that this environment variable may need to be loaded.
+This generates an dynamic library (file with '.so' extension).
 
 # Tests
 Run
@@ -35,4 +28,5 @@ problem yet. As I remember this occurs for large angular grids.
 
 
 # TODO
-- [ ] Compile and install the fortran library independently. (Just ask AI how to do that)
+- [x] Compile and install the fortran library independently. (Just ask AI how to do that)
+- [ ] Make this run on Windows, MacOS!

@@ -13,3 +13,5 @@ It is then loaded in `src/qcp_density_operations/calc_esp/calc_esp.py:get_fortra
 
 **TODO: Possible Fallback**
 Automatically fallback to numpy integration. Maybe could make a class with fort_lib_there bool property.
+
+Previously I solved that with environment variable, but again that might be a problem in windows...
